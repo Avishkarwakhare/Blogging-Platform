@@ -3,11 +3,18 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
+const dns = require('dns');
+
+// Fix for local DNS resolution issues with MongoDB Atlas SRV records
+if (process.env.NODE_ENV !== 'production') {
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+    console.log('Using Google DNS for Atlas connectivity...');
+}
 
 // Load env vars
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-console.log('MONGO_URI:', process.env.MONGO_URI); // Debugging
+console.log('Connecting to MONGO_URI:', process.env.MONGO_URI?.substring(0, 20) + '...');
 
 // Connect to database
 connectDB();

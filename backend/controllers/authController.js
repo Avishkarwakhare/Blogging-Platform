@@ -54,10 +54,13 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
+            console.log(`Login failed: User not found for email ${email}`);
             return res.status(401).json({ success: false, message: 'User not registered' });
         }
 
-        if (await user.matchPassword(password)) {
+        const isMatch = await user.matchPassword(password);
+        if (isMatch) {
+            console.log(`Login successful for user: ${email}`);
             res.json({
                 success: true,
                 user: {
@@ -70,9 +73,11 @@ const loginUser = async (req, res) => {
                 },
             });
         } else {
+            console.log(`Login failed: Incorrect password for email ${email}`);
             res.status(401).json({ success: false, message: 'The pass is incorrect' });
         }
     } catch (error) {
+        console.error('Login error:', error.message);
         res.status(500).json({ success: false, message: error.message });
     }
 };
