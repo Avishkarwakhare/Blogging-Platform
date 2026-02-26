@@ -7,7 +7,7 @@ export const getImageUrl = (url) => {
     }
 
     // Use the base URL from env or fallback to localhost:4000
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://blogging-platform-backend-uu7b.onrender.com';
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
     const baseUrl = apiBaseUrl.replace('/api', '');
 
     return `${baseUrl}${url}`;
