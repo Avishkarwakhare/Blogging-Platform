@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-indigo-50: #fff7ed;
+  --color-indigo-100: #ffedd5;
+  --color-indigo-200: #fed7aa;
+  --color-indigo-300: #fdba74;
+  --color-indigo-400: #fb923c;
+  --color-indigo-500: #f97316;
+  --color-indigo-600: #ea580c;
+  --color-indigo-700: #c2410c;
+  --color-indigo-800: #9a3412;
+  --color-indigo-900: #7c2d12;
+  --color-indigo-950: #431407;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --background: #fffaf5;
+    --foreground: #2d241e;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --background: #1a1614;
+    --foreground: #fdf8f6;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Global transition for all elements to prevent staggered flicker */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+  }
+}
+
+/* Ensure Tailwind v4 uses the .dark class for dark: variant */
+@custom-variant dark (&:where(.dark, .dark *));
