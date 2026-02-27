@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { login } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
@@ -27,21 +30,36 @@ const Login = () => {
                 <div>
                     <label className="block text-sm font-medium mb-1">Email</label>
                     <input
-                        {...register('email', { required: 'Email is required' })}
+                        {...register('email', {
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^[\w-\.]+@(gmail\.com|outlook\.in|outlook\.com|yahoo\.com|hotmail\.com|icloud\.com)$/i,
+                                message: "Please enter a valid email"
+                            }
+                        })}
                         type="email"
                         className="w-full px-4 py-2 rounded-lg border dark:border-slate-800 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                        placeholder="you@example.com"
+                        placeholder="you@gmail.com"
                     />
                     {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-1">Password</label>
-                    <input
-                        {...register('password', { required: 'Password is required' })}
-                        type="password"
-                        className="w-full px-4 py-2 rounded-lg border dark:border-slate-800 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                        placeholder="••••••••"
-                    />
+                    <div className="relative">
+                        <input
+                            {...register('password', { required: 'Password is required' })}
+                            type={showPassword ? "text" : "password"}
+                            className="w-full px-4 py-2 rounded-lg border dark:border-slate-800 bg-transparent focus:ring-2 focus:ring-indigo-500 outline-none transition-all pr-10"
+                            placeholder="••••••••"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                 </div>
                 <button

@@ -27,6 +27,7 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
+            console.log(`User registered successfully: ${email}`);
             res.status(201).json({
                 success: true,
                 user: {
@@ -40,6 +41,7 @@ const registerUser = async (req, res) => {
             });
         }
     } catch (error) {
+        console.error(`Registration error for ${email}:`, error.message);
         res.status(400).json({ success: false, message: error.message });
     }
 };

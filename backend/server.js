@@ -30,11 +30,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// Enable CORS
-app.use(cors());
+// Enable CORS with dynamic origin
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || '*',
+    credentials: true,
+};
+app.use(cors(corsOptions));
 
 // Serve static files (for uploads)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
+if (!require('fs').existsSync(uploadsPath)) {
+    require('fs').mkdirSync(uploadsPath, { recursive: true });
+}
 
 // Mount routers
 app.use('/api/auth', require('./routes/authRoutes'));
