@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, FileText, Edit, Trash2, Settings, Save, X, ImageIcon, Upload } from 'lucide-react';
+import { User, Mail, FileText, Edit, Trash2, Settings, Save, X, ImageIcon, Upload, Lock, Eye, EyeOff } from 'lucide-react';
 import { getFullAvatarUrl } from '../utils/imageUrl';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [showPasswordFields, setShowPasswordFields] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const fileInputRef = useRef(null);
 
     const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
@@ -42,9 +44,16 @@ const Profile = () => {
 
     const onSubmit = async (data) => {
         try {
+            // Clean data: if password fields shown but empty, don't send as empty string
+            if (showPasswordFields && (!data.password || data.password.trim() === '')) {
+                delete data.password;
+            }
+
             await updateProfile(data);
             toast.success('Profile updated successfully!');
             setIsEditing(false);
+            setShowPasswordFields(false);
+            setShowPassword(false);
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to update profile');
         }
@@ -207,11 +216,56 @@ const Profile = () => {
                                     className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none shadow-sm"
                                 />
                             </div>
-                            <div className="flex gap-2 pt-2">
+
+                            {showPasswordFields && (
+                                <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Password</label>
+                                            <button
+                                                type="button"
+                                                onClick={() => { setShowPasswordFields(false); setValue('password', ''); }}
+                                                className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase tracking-widest"
+                                            >
+                                                Discard
+                                            </button>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                type={showPassword ? 'text' : 'password'}
+                                                {...register('password', {
+                                                    minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                                                })}
+                                                className="w-full p-2.5 pr-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
+                                                placeholder="Enter new password (min 6 characters)"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-2.5 text-slate-400 hover:text-indigo-600 transition-colors"
+                                            >
+                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                        {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {!showPasswordFields && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPasswordFields(true)}
+                                        className="flex items-center gap-2 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all font-bold text-slate-600 dark:text-slate-300"
+                                    >
+                                        <Lock size={18} /> Update Password
+                                    </button>
+                                )}
                                 <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-md transition-all active:scale-95">
                                     <Save size={18} /> Save Changes
                                 </button>
-                                <button type="button" onClick={() => { setIsEditing(false); reset(); }} className="flex items-center gap-2 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all font-bold">
+                                <button type="button" onClick={() => { setIsEditing(false); setShowPasswordFields(false); reset(); }} className="flex items-center gap-2 px-6 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all font-bold">
                                     <X size={18} /> Cancel
                                 </button>
                             </div>

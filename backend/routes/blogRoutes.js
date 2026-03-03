@@ -15,7 +15,7 @@ router.post('/upload', protect, upload.single('coverImage'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'Please upload a file' });
     }
-    const filePath = `/uploads/${req.file.filename}`;
+    const filePath = req.file.path;
     res.json({ success: true, url: filePath });
 });
 

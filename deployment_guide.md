@@ -30,7 +30,9 @@ Welcome to your first deployment! We will deploy your backend to **Render** and 
     - `JWT_SECRET`: (Any random long string)
     - `OPENROUTER_API_KEY`: (Your key)
     - `NODE_ENV`: `production`
-    - `PORT`: `4000`
+    - `CLOUDINARY_CLOUD_NAME`: `di8qgp5t1`
+    - `CLOUDINARY_API_KEY`: `729872833251373`
+    - `CLOUDINARY_API_SECRET`: (Your Secret)
 7.  **Deploy**: Click "Create Web Service". Wait for it to build. Once done, copy your Render URL (e.g., `https://markblog-backend.onrender.com`).
 
 ---
